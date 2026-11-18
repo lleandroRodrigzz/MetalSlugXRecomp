@@ -17,6 +17,7 @@ do PS1 é traduzido para C e compilado como um programa nativo do PC, sem emular
 ## Recursos
 
 - Executável nativo para Windows (64 bits)
+- Código de todas as fases pré-compilado na instalação: sem engasgos ao carregar trechos novos
 - Launcher com verificação do disco, configuração de controles e memory cards virtuais
 - **2 jogadores locais** (controles Xbox, DualShock e DualSense)
 - Opções de vídeo do psxrecomp (resolução interna maior, widescreen)
@@ -96,9 +97,20 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
    - baixa o psxrecomp, o launcher e um compilador (cerca de 209 MB);
    - gera o código do jogo a partir do seu disco;
    - compila o jogo;
+   - **pré-compila o código de todas as fases**, para o jogo não engasgar durante a partida;
    - cria o atalho **Metal Slug X Recompiled** na Área de Trabalho.
-3. **Espere de 20 a 40 minutos** e não feche a janela. Vão aparecer muitas mensagens, e isso é normal.
+3. **Espere de 1 a 2 horas** e não feche a janela. Vão aparecer muitas mensagens, e isso é normal.
 4. Quando aparecer **"Pronto!"** em verde, terminou.
+
+> **Espaço necessário:** cerca de **2,5 GB** livres (o projeto, o compilador e as fases pré-compiladas).
+>
+> **Com pressa?** Rode com `-SemAot` para pular a pré-compilação das fases. A instalação fica
+> uns 40 minutos mais rápida e usa ~700 MB a menos, mas o jogo dá pequenas travadas na primeira
+> vez que cada trecho de fase aparece (nas vezes seguintes fica liso):
+>
+> ```powershell
+> powershell -ExecutionPolicy Bypass -File setup.ps1 -SemAot
+> ```
 
 ### Passo 5 — Jogue
 
@@ -112,6 +124,18 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 > **Enviar para** → **Área de trabalho (criar atalho)**.
 
 ---
+
+## Controles e atalhos
+
+| Ação | Teclado | Controle |
+|---|---|---|
+| Tela cheia / janela | **Alt + Enter** ou **Ctrl + F** | — |
+| Abrir o menu do psxrecomp (pausa) | **F10** ou **Ctrl + L** | Segure **Select/View** e aperte o **analógico esquerdo** (L3) |
+| Turbo (acelerar o jogo) | **Tab** | — |
+| Fechar o jogo | **Alt + F4** ou o **X** da janela | — |
+
+> O **Esc** não fecha o jogo: ele só volta nos menus. Antes de fechar, salve o progresso no
+> próprio jogo; ele grava no memory card virtual (`card1.mcd`).
 
 ## Dois jogadores
 
@@ -131,9 +155,11 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 
 ## Problemas conhecidos
 
-- O Metal Slug X carrega partes do código do disco durante o jogo. Na primeira vez que um trecho
-  novo aparece, ele roda num interpretador e é convertido em segundo plano, o que pode causar
-  pequenos engasgos. Nas próximas vezes, o trecho já roda nativo.
+- O Metal Slug X carrega o código de cada fase do disco durante o jogo. O instalador pré-compila
+  essas 47 partes, então a partida roda lisa desde a primeira vez. Se você instalou com `-SemAot`,
+  ou se algum trecho raro não foi coberto, ele roda num interpretador e é convertido em segundo
+  plano, o que pode causar um engasgo só na primeira vez.
+- Em cenas com muitos inimigos e explosões pode haver lentidão, que também existe no jogo original de PS1.
 - O modo online (netplay) do psxrecomp não está habilitado neste projeto.
 
 Encontrou um travamento? Abra uma [issue](https://github.com/lleandroRodrigzz/MetalSlugXRecomp/issues)

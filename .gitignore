@@ -95,3 +95,5 @@ starvation_dump.jsonl
 /generated/
 /toolchain/
 run.err
+aot-work/
+run2.err

@@ -1,6 +1,8 @@
 # Instalador de um comando para Windows.
-# Uso: powershell -ExecutionPolicy Bypass -File setup.ps1 [-Disc "C:\caminho\Metal Slug X (USA).cue"]
-param([string]$Disc)
+# Uso: powershell -ExecutionPolicy Bypass -File setup.ps1 [-Disc "C:\caminho\Metal Slug X (USA).cue"] [-SemAot]
+#   -SemAot  pula a pre-compilacao das fases (instala ~40 min mais rapido e usa ~700 MB
+#            a menos, mas o jogo trava um pouco na primeira vez que cada trecho aparece)
+param([string]$Disc, [switch]$SemAot)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
@@ -41,9 +43,17 @@ if (-not $Disc) {
 if (-not (Test-Path $Disc)) { Write-Host "Arquivo nao encontrado: $Disc" -ForegroundColor Red; exit 1 }
 
 Write-Host "Disco: $Disc"
-Write-Host "Isso pode levar de 20 a 40 minutos na primeira vez. Nao feche esta janela." -ForegroundColor Yellow
+if ($SemAot) {
+    $aotArg = ' --sem-aot'
+    Write-Host "Pre-compilacao das fases: DESLIGADA (-SemAot)."
+    Write-Host "Isso pode levar de 20 a 40 minutos. Nao feche esta janela." -ForegroundColor Yellow
+} else {
+    $aotArg = ''
+    Write-Host "Pre-compilacao das fases: LIGADA (para desligar, rode de novo com -SemAot)."
+    Write-Host "Isso pode levar de 1 a 2 horas. Nao feche esta janela." -ForegroundColor Yellow
+}
 
-& $bash -lc "cd '$($PSScriptRoot -replace '\\','/')' && bash scripts/setup.sh '$($Disc -replace '\\','/')'"
+& $bash -lc "cd '$($PSScriptRoot -replace '\\','/')' && bash scripts/setup.sh '$($Disc -replace '\\','/')'$aotArg"
 if ($LASTEXITCODE -ne 0) { Write-Host "A instalacao falhou. Veja as mensagens acima." -ForegroundColor Red; exit $LASTEXITCODE }
 
 $exe = Join-Path $PSScriptRoot 'build-release\MetalSlugX_Recompiled.exe'
