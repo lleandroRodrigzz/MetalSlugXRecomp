@@ -1,131 +1,149 @@
-# MetalSlugX Recompiled
+# Metal Slug X Recompiled
 
-<!-- retcomm-readme-metrics -->
-[![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/RetroPortingToolKit/MetalSlugXRecomp/total)](https://github.com/RetroPortingToolKit/MetalSlugXRecomp/releases)
-[![GitHub downloads (latest release)](https://img.shields.io/github/downloads/RetroPortingToolKit/MetalSlugXRecomp/latest/total)](https://github.com/RetroPortingToolKit/MetalSlugXRecomp/releases/latest)
-[![GitHub release](https://img.shields.io/github/v/release/RetroPortingToolKit/MetalSlugXRecomp)](https://github.com/RetroPortingToolKit/MetalSlugXRecomp/releases/latest)
-<!-- /retcomm-readme-metrics -->
+Port nativo para Windows do **Metal Slug X (PlayStation, USA — SLUS-01212)**, feito por
+**recompilação estática** com o [psxrecomp](https://github.com/mstan/psxrecomp). O executável
+do PS1 é traduzido para C e compilado como um programa nativo do PC, sem emular a CPU.
 
-Static recompilation of **MetalSlugX** built on
-[psxrecomp](https://github.com/mstan/psxrecomp) and
-[recomp-ui](https://github.com/RetroPortingToolKit/recomp-ui).
+<p align="center">
+  <img src="docs/screenshots/launcher.png" alt="Launcher com o disco verificado e o controle do Player 1 conectado" width="720">
+</p>
 
-_Add a short pitch in catalog_identity.json / README._
-
-| | |
+| Seleção de personagem | Início da Missão 1 |
 |---|---|
-| Players | 2 |
-| Region | USA |
-| Publisher | — |
-| Year | — |
+| ![Soldier Select](docs/screenshots/soldier-select.png) | ![Missão 1](docs/screenshots/missao-1-inicio.png) |
+| **Gameplay** | **Heavy Machine Gun** |
+| ![Gameplay](docs/screenshots/gameplay-1.png) | ![Heavy Machine Gun](docs/screenshots/gameplay-heavy-machine-gun.png) |
 
-Scaffolded with the New Project Layout. See
-`psxrecomp/docs/GAME_PROJECT_SETUP.md` for the full flow.
+## Recursos
 
-<!-- retcomm-readme-launcher -->
-## Retro Launcher
+- Executável nativo para Windows (64 bits)
+- Launcher com verificação do disco, configuração de controles e memory cards virtuais
+- **2 jogadores locais** (controles Xbox, DualShock e DualSense)
+- Opções de vídeo do psxrecomp (resolução interna maior, widescreen)
 
-You can run this title **standalone** (download the release zip, point it at
-your disc, play), or manage installs, updates, and disc/BIOS wiring with
-**[Retro Launcher](https://github.com/RetroPortingToolKit/Retro-Launcher)** —
-the Retro Compilation Manager hub for self-compiling recomps.
-
-[Downloads](https://github.com/RetroPortingToolKit/Retro-Launcher/releases) ·
-[Full README & features](https://github.com/RetroPortingToolKit/Retro-Launcher#readme)
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/RetroPortingToolKit/Retro-Launcher/main/docs/screenshots/hub-and-game-launcher.png" alt="Retro hub with a background build, next to a title’s recomp-ui launcher" width="720">
-</p>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/RetroPortingToolKit/Retro-Launcher/main/docs/screenshots/queue-and-background-build.png" alt="Background cmake build with titles queued" width="720">
-</p>
-
-Retro checks for updates, installs the prebuilt release zips, and automates
-BIOS/ROM/save plumbing so you are not stuck repeating each game’s first run by hand.
-<!-- /retcomm-readme-launcher -->
-
-## Legal
-
-You must own the original game. Disc images under `disc/` are gitignored and
-must never be committed. Retail BIOS dumps are not redistributed and no C
-derived from one may be committed; releases run on the bundled MIT OpenBIOS.
-
-`generated/` (the recompiled game C) **is committed**: releases ship the
-compiled game, built by CI from that tree. Regenerate and commit it whenever
-seeds or the framework pin change.
-
-Default app icon: `assets/psxrecomp.ico` (and `.png` / `.svg`) — Retro-themed controller mark from `psxrecomp/assets/`. Windows builds embed it via `APP_ICON`.
-
-Optional box art under `launcher_assets/img/` may come from
-[libretro-thumbnails](https://github.com/libretro-thumbnails/libretro-thumbnails)
-(`Named_Boxarts`); see `BOXART_SOURCE.txt` when present.
-
-## Quick start (dev)
-
-```bash
-git submodule update --init --recursive
-./psxrecomp/tools/ci/build_emitters.sh
-python3 psxrecomp/psxrecomp_cli.py generate \
-  --config game.toml --project-root . --disc disc/<your>.cue
-git add generated && git commit -m "Regenerate game C"
-# Configures, builds, and stages overlay_toolchain/ beside the runtime so
-# streamed overlays can be compiled to native shards (a bare cmake build
-# skips that stage and leaves every overlay gap interpreted).
-python3 psxrecomp/psxrecomp_cli.py rebuild \
-  --config game.toml --project-root . --build-dir build-release --no-pgo
-```
-
-Official optimized Windows/Linux releases use the maintained shared builder
-with the title disc available. Commit the desired `VERSION`, source and
-framework pins, then run:
-
-```bash
-scripts/package_release.sh --channel public
-# Use --channel playtest for a non-public package; --platform selects Windows/Linux.
-```
-
-On Windows PowerShell, use
-`psxrecomp/tools/package_title_release.ps1 --channel public`. The generated
-`packaging/release.toml` and player instructions define the title payload.
-The shared builder owns regeneration, qualified build defaults, fresh private
-PGO boot training on supported native toolchains, staging and verification.
-Boot training is a build step, not gameplay qualification or a performance
-claim. See `psxrecomp/docs/RELEASING_A_TITLE.md`.
-
-The separate *Release builds* CI workflow (tag `vX.Y.Z` or dispatch) builds
-committed `generated/` C without a disc on Linux, Windows and macOS. It uses
-`scripts/package_prebuilt_release.sh` and attaches compiled-game ZIPs. That
-explicit prebuilt path does not train selective PGO and is not the official
-optimized-release command. The common builder does not add macOS support.
-
-Studio's current Export action still uses the old prebuilt argument contract;
-use the shared command above for optimized releases until Studio adopts the
-recipe/channel interface. Its packager detection and `packaging/` warning also
-need that adoption; the generated recipe is maintained configuration, not a
-forked packager.
-
-## Symbols
-
-Progressive map: `symbols.toml` → `python3 tools/sync_symbols.py` →
-`psx_symbols.h` (`PSX_FN_*`). See `psxrecomp/docs/SYMBOLS.md`.
-
-## Framework pins
-
-Submodule gitlinks (`psxrecomp`, optional `recomp-ui`, nested `recomp-net`)
-are authoritative. `framework_pins.txt` is an optional scaffold snapshot;
-release CI logs SHAs with `record_pins.sh` but builds whatever the gitlinks
-resolve to. Bump submodules deliberately — do not float on `main`/`master`
-in release CI.
-
-<!-- retcomm-readme-raid -->
 ---
 
-<p align="center">
-  <sub><b>R.A.I.D. — Retro AI Development</b> · a Discord for AI-assisted retro reverse-engineering, decomp &amp; recomp</sub>
-</p>
+## Como instalar (passo a passo)
 
-<p align="center">
-  <a href="https://discord.gg/Ad9BwSzctP"><img src=".github/raid-discord.png" alt="Join the Retro AI Development (R.A.I.D.) Discord" width="200"></a>
-</p>
-<!-- /retcomm-readme-raid -->
+São **5 passos**. Você só faz isso uma vez.
+
+### Passo 1 — Tenha a imagem do SEU disco
+
+Este repositório **não contém o jogo**. Você precisa da imagem do seu próprio disco de
+**Metal Slug X (USA)** no formato **BIN/CUE**: são dois arquivos, um `.bin` e um `.cue`, que
+devem ficar juntos na mesma pasta.
+
+- Para criar a imagem a partir do seu CD, siga o
+  [guia de dump do Redump](http://wiki.redump.org/index.php?title=Dumping_Guides).
+- A imagem precisa ser exatamente esta (o jogo confere na hora de abrir):
+
+  | Campo | Valor esperado |
+  |---|---|
+  | Serial | SLUS-01212 |
+  | Tamanho do `.bin` | 104.315.904 bytes |
+  | SHA1 do `.bin` | `f1ea9a0ae2115f476bd4767b1ac0ba9d0b5ac972` |
+
+- Se sua imagem estiver em **CHD**, converta para BIN/CUE com o `chdman` (vem com o MAME):
+
+  ```bash
+  chdman extractcd -i "Metal Slug X.chd" -o "Metal Slug X (USA).cue" -ob "Metal Slug X (USA).bin"
+  ```
+
+> Guarde a imagem numa pasta fixa, por exemplo `C:\Jogos\Metal Slug X (USA)\`.
+> O jogo lê o disco dessa pasta toda vez que abre, então não mova nem apague a imagem depois.
+
+### Passo 2 — Instale o Git e o Python
+
+1. Clique com o botão direito no **menu Iniciar** e escolha **Terminal** (ou **Windows PowerShell**).
+2. Cole este comando e aperte **Enter**:
+
+   ```powershell
+   winget install Git.Git Python.Python.3.12
+   ```
+
+3. Aceite o que for pedido e espere terminar.
+4. **Feche a janela do PowerShell e abra uma nova.** Sem isso, os comandos novos não são reconhecidos.
+
+> Já tem Git e Python instalados? Pode pular este passo.
+
+### Passo 3 — Baixe este projeto
+
+No PowerShell novo, cole os dois comandos abaixo, um de cada vez, apertando **Enter** depois de cada um:
+
+```powershell
+cd $HOME\Downloads
+```
+
+```powershell
+git clone https://github.com/lleandroRodrigzz/MetalSlugXRecomp.git
+```
+
+Isso cria a pasta `Downloads\MetalSlugXRecomp`.
+
+### Passo 4 — Rode o instalador
+
+Ainda no PowerShell, cole:
+
+```powershell
+cd MetalSlugXRecomp
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+1. Vai abrir uma janela pedindo o arquivo **`.cue`** do Metal Slug X. Selecione-o e clique em **Abrir**.
+2. O instalador faz tudo sozinho:
+   - baixa o psxrecomp, o launcher e um compilador (cerca de 209 MB);
+   - gera o código do jogo a partir do seu disco;
+   - compila o jogo;
+   - cria o atalho **Metal Slug X Recompiled** na Área de Trabalho.
+3. **Espere de 20 a 40 minutos** e não feche a janela. Vão aparecer muitas mensagens, e isso é normal.
+4. Quando aparecer **"Pronto!"** em verde, terminou.
+
+### Passo 5 — Jogue
+
+1. Abra o atalho **Metal Slug X Recompiled** na Área de Trabalho.
+2. No launcher, confira se aparece **✓ Disc verified**. Se não aparecer, clique em
+   **Browse For Disc / SBI** e escolha o seu `.cue`.
+3. Clique em **PLAY**.
+
+> Não mova o `MetalSlugX_Recompiled.exe` para fora da pasta `build-release`, porque ele usa os
+> arquivos que estão ao lado. Se quiser outro atalho, clique com o botão direito no `.exe` →
+> **Enviar para** → **Área de trabalho (criar atalho)**.
+
+---
+
+## Dois jogadores
+
+1. Conecte os **dois controles** antes de abrir o jogo.
+2. No launcher, configure um controle na aba **PLAYER 1** e o outro na aba **PLAYER 2**.
+3. Durante o jogo, o segundo jogador entra apertando **START**.
+
+## Deu erro? Soluções rápidas
+
+| Problema | O que fazer |
+|---|---|
+| `winget` não é reconhecido | Atualize o **Instalador de Aplicativo** pela Microsoft Store, ou instale o [Git](https://git-scm.com/downloads/win) e o [Python](https://www.python.org/downloads/windows/) pelos sites (no Python, marque **"Add python.exe to PATH"**). |
+| `git` ou `python` não é reconhecido | Feche e abra o PowerShell de novo depois de instalar. |
+| `python` abre a Microsoft Store | Em **Configurações → Aplicativos → Configurações avançadas de aplicativos → Aliases de execução**, desligue `python.exe` e `python3.exe`. |
+| "Disc verified" não aparece | Sua imagem não é a versão USA esperada. Confira o tamanho e o SHA1 do Passo 1. |
+| O instalador parou com erro | Rode o Passo 4 de novo (é seguro repetir). Se o erro persistir, abra uma issue com a mensagem que apareceu. |
+
+## Problemas conhecidos
+
+- O Metal Slug X carrega partes do código do disco durante o jogo. Na primeira vez que um trecho
+  novo aparece, ele roda num interpretador e é convertido em segundo plano, o que pode causar
+  pequenos engasgos. Nas próximas vezes, o trecho já roda nativo.
+- O modo online (netplay) do psxrecomp não está habilitado neste projeto.
+
+Encontrou um travamento? Abra uma [issue](https://github.com/lleandroRodrigzz/MetalSlugXRecomp/issues)
+dizendo a fase, o que estava acontecendo e o conteúdo do arquivo `build-release\psx_crash.txt`, se ele existir.
+
+## Créditos e aviso legal
+
+- Recompilação: [psxrecomp](https://github.com/mstan/psxrecomp) e
+  [recomp-ui](https://github.com/RetroPortingToolKit/recomp-ui) (mstan / RetroPortingToolKit).
+- *Metal Slug X* é © SNK. Este é um projeto de fãs, sem vínculo com a SNK.
+- Nenhuma imagem de disco, BIOS ou código do jogo é distribuído neste repositório. Você precisa
+  ter o jogo original.

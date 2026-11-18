@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=MetalSlugX
+Exec=MetalSlugX_Recompiled
+Icon=msx
+Categories=Game;
+Terminal=false
