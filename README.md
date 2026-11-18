@@ -33,8 +33,7 @@ Este repositório **não contém o jogo**. Você precisa da imagem do seu própr
 **Metal Slug X (USA)** no formato **BIN/CUE**: são dois arquivos, um `.bin` e um `.cue`, que
 devem ficar juntos na mesma pasta.
 
-- Para criar a imagem a partir do seu CD, siga o
-  [guia de dump do Redump](http://wiki.redump.org/index.php?title=Dumping_Guides).
+- Você pode encontrar o jogo no site ROMSFUN.COM (Recomendado), procure o "Metal Slug X" na categoria de Roms "Playstation"
 - A imagem precisa ser exatamente esta (o jogo confere na hora de abrir):
 
   | Campo | Valor esperado |
