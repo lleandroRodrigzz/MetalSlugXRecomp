@@ -1,0 +1,13 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "MetalSlugX",
+  "system": "PS1",
+  "type": "recomp",
+  "toolchain": "psxrecomp",
+  "status": "exploring",
+  "project": "MetalSlugXRecomp",
+  "original": {
+    "region": "USA",
+    "serial": "SLUS-01212"
+  }
+}
